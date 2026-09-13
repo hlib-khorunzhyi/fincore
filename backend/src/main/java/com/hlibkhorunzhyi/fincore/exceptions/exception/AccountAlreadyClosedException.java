@@ -1,4 +1,4 @@
-package com.hlibkhorunzhyi.fincore.exception;
+package com.hlibkhorunzhyi.fincore.exceptions.exception;
 
 public class AccountAlreadyClosedException extends RuntimeException {
     public AccountAlreadyClosedException(Long id) {

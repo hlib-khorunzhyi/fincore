@@ -1,4 +1,4 @@
-package com.hlibkhorunzhyi.fincore.exception;
+package com.hlibkhorunzhyi.fincore.exceptions.exception;
 
 public class AccountHasBalanceException extends RuntimeException {
     public AccountHasBalanceException(Long id) {

@@ -1,4 +1,18 @@
 package com.hlibkhorunzhyi.fincore.auth.dto;
 
-public record RegisterRequest(String email, String firstName, String lastName, String password) {
+import jakarta.validation.constraints.NotNull;
+
+public record RegisterRequest(
+
+        @NotNull
+        String email,
+
+        @NotNull
+        String firstName,
+
+        @NotNull
+        String lastName,
+
+        @NotNull
+        String password) {
 }

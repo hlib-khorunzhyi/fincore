@@ -1,4 +1,4 @@
-package com.hlibkhorunzhyi.fincore.exception;
+package com.hlibkhorunzhyi.fincore.exceptions.exception;
 
 public class InvalidCredentialsException extends RuntimeException{
 
