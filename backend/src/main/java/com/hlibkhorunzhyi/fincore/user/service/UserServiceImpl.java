@@ -1,5 +1,7 @@
 package com.hlibkhorunzhyi.fincore.user.service;
 
+import com.hlibkhorunzhyi.fincore.exception.EmailAlreadyExistsException;
+import com.hlibkhorunzhyi.fincore.exception.UserNotFoundException;
 import com.hlibkhorunzhyi.fincore.user.dto.CreateUserRequest;
 import com.hlibkhorunzhyi.fincore.user.dto.UpdateUserRequest;
 import com.hlibkhorunzhyi.fincore.user.dto.UserResponse;
@@ -38,22 +40,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow();
-//                .orElseThrow(() -> new UserNotFoundException);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException());
 
         return UserResponse.from(user);
     }
 
     @Override
     public User getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
-//                .orElseThrow(() -> new UserNotFoundException);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException());
 
         return user;
     }
 
     @Override
     public UserResponse createUser(CreateUserRequest request) {
+        if (userRepository.existsByEmail(request.email()))
+            throw new EmailAlreadyExistsException(request.email());
+
         User user = new User();
 
         user.setEmail(request.email());
