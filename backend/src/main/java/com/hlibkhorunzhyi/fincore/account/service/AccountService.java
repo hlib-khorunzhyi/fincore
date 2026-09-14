@@ -14,7 +14,7 @@ public interface AccountService {
 
     List<AccountResponse> getAccountsByUserIdAndStatus(Long userId, AccountStatus status);
 
-    AccountResponse createAccount(CreateAccountRequest request);
+    AccountResponse createAccount(Long usrId, CreateAccountRequest request);
 
     void closeAccount(Long id);
 }

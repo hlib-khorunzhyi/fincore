@@ -1,4 +1,29 @@
 package com.hlibkhorunzhyi.fincore.user.dto;
 
-public record CreateUserRequest(String email, String firstName, String lastName, String password) {
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Length;
+
+public record CreateUserRequest(
+
+        @NotBlank(message = "Email is required")
+        @Size(max = 255, message = "Email must not exceed 255 characters")
+        @Email(message = "Invalid email format")
+        String email,
+
+        @NotBlank(message = "First name is required")
+        @Size(max = 100, message = "First name must not exceed 100 characters")
+        String firstName,
+
+        @NotBlank(message = "Last name is required")
+        @Size(max = 255, message = "Last name must not exceed 255 characters")
+        String lastName,
+
+        @NotBlank(message = "Password is required")
+        @Size(min = 8, max = 255, message = "Password must contain between 8 and 255 characters")
+        String password
+) {
 }

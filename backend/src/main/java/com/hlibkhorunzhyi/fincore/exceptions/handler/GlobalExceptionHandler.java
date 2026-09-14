@@ -1,11 +1,16 @@
 package com.hlibkhorunzhyi.fincore.exceptions.handler;
 
+import com.hlibkhorunzhyi.fincore.exceptions.dto.ValidationErrorResponse;
 import com.hlibkhorunzhyi.fincore.exceptions.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -65,18 +70,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidation(
+    public ResponseEntity<ValidationErrorResponse> handleValidation(
             MethodArgumentNotValidException exception
     ) {
-        String message = exception.getBindingResult()
+        Map<String, String> errors = exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> error.getField() + ":" + error.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation failed");
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage,
+                        (existing, replacement) -> existing
+                ));
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(message);
+                .body(new ValidationErrorResponse(errors));
     }
 }
