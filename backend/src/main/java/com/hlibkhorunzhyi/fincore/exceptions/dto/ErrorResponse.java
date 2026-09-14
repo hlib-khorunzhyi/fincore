@@ -1,13 +1,11 @@
 package com.hlibkhorunzhyi.fincore.exceptions.dto;
 
 import java.time.Instant;
-import java.util.Map;
 
-public record ValidationErrorResponse(
+public record ErrorResponse(
         int status,
         String error,
         String message,
-        Instant timestamp,
-        Map<String, String> errors
+        Instant timestamp
 ) {
 }
