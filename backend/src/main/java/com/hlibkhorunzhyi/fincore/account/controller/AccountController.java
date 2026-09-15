@@ -28,8 +28,11 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long id){
-        return ResponseEntity.ok(accountService.getAccount(id));
+    public ResponseEntity<AccountResponse> getAccountById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user
+    ){
+        return ResponseEntity.ok(accountService.getAccount(id, user.getId()));
     }
 
     @PostMapping

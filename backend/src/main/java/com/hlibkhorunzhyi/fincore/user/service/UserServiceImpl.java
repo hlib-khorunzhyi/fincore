@@ -6,6 +6,7 @@ import com.hlibkhorunzhyi.fincore.user.dto.CreateUserRequest;
 import com.hlibkhorunzhyi.fincore.user.dto.UpdateUserRequest;
 import com.hlibkhorunzhyi.fincore.user.dto.UserResponse;
 import com.hlibkhorunzhyi.fincore.user.entity.User;
+import com.hlibkhorunzhyi.fincore.user.entity.UserRole;
 import com.hlibkhorunzhyi.fincore.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

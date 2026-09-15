@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
             UserNotFoundException exception
     ) {
         return buildErrorResponse(
-                HttpStatus.CONFLICT,
+                HttpStatus.NOT_FOUND,
                 "USER_NOT_FOUND",
                 exception.getMessage()
         );

@@ -4,7 +4,7 @@ import com.hlibkhorunzhyi.fincore.auth.dto.AuthResponse;
 import com.hlibkhorunzhyi.fincore.auth.dto.LoginRequest;
 import com.hlibkhorunzhyi.fincore.auth.dto.RegisterRequest;
 import com.hlibkhorunzhyi.fincore.exceptions.exception.InvalidCredentialsException;
-import com.hlibkhorunzhyi.fincore.security.JwtService;
+import com.hlibkhorunzhyi.fincore.security.jwt.JwtService;
 import com.hlibkhorunzhyi.fincore.user.dto.CreateUserRequest;
 import com.hlibkhorunzhyi.fincore.user.dto.UserResponse;
 import com.hlibkhorunzhyi.fincore.user.entity.User;

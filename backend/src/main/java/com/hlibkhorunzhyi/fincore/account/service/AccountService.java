@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AccountService {
 
-    AccountResponse getAccount(Long id);
+    AccountResponse getAccount(Long id, Long userId);
 
     List<AccountResponse> getAccountsByUserId(Long userId);
 

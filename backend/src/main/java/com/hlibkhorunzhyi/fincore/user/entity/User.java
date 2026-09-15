@@ -1,12 +1,18 @@
 package com.hlibkhorunzhyi.fincore.user.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(name = "uk_users_email", columnNames = "email")})
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
@@ -35,10 +41,14 @@ public class User {
     @Column(nullable = false)
     private Instant updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
+
     public User() {
     }
 
-    public User(Long id, String email, String firstName, String lastName, String passwordHash, UserStatus status, Instant createdAt, Instant updatedAt) {
+    public User(Long id, String email, String firstName, String lastName, String passwordHash, UserStatus status, Instant createdAt, Instant updatedAt, UserRole role) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -47,6 +57,7 @@ public class User {
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.role = role;
     }
 
     public Long getId() {
@@ -113,6 +124,52 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return List.of(
+                new SimpleGrantedAuthority("ROLE_" + role.name())
+        );
+    }
+
+    @Override
+    public String getPassword(){
+        return passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return status != UserStatus.BLOCKED;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return status == UserStatus.ACTIVE;
+    }
+
+
     @PrePersist
     protected void onCreate() {
         Instant now = Instant.now();
@@ -121,6 +178,9 @@ public class User {
 
         if (status == null) {
             status = UserStatus.ACTIVE;
+        }
+        if (role == null) {
+            role = UserRole.USER;
         }
     }
 

@@ -32,8 +32,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponse getAccount(Long id) {
-        Account account = accountRepository.findById(id).orElseThrow(
+    public AccountResponse getAccount(Long id, Long userId) {
+        Account account = accountRepository.findByIdAndUserId(id, userId).orElseThrow(
                 () -> new AccountNotFoundException(id)
         );
 
