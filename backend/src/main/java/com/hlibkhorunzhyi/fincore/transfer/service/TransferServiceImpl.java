@@ -54,28 +54,30 @@ public class TransferServiceImpl implements TransferService {
         Account sourceAccount;
         Account destinationAccount;
 
-        int comparison = request.sourceAccountId()
-                .compareTo(request.destinationAccountId());
+        int comparison = request.sourceAccountNumber()
+                .compareTo(request.destinationAccountNumber());
 
         if (comparison == 0) {
             throw new InvalidTransferException();
         } else if (comparison < 0) {
-            sourceAccount = accountRepository.findByIdAndUserId(request.sourceAccountId(), userId).orElseThrow(() ->
-                    new AccountNotFoundException(request.sourceAccountId())
+            sourceAccount = accountRepository.findByAccountNumberAndUserId(request.sourceAccountNumber(), userId).orElseThrow(() ->
+                    new AccountNotFoundException(request.sourceAccountNumber())
             );
 
-            destinationAccount = accountRepository.findByIdForUpdate(request.destinationAccountId()).orElseThrow(() ->
-                    new AccountNotFoundException((request.destinationAccountId()))
+            destinationAccount = accountRepository.findByAccountNumberForUpdate(request.destinationAccountNumber()).orElseThrow(() ->
+                    new AccountNotFoundException((request.destinationAccountNumber()))
             );
         } else {
-            destinationAccount = accountRepository.findByIdForUpdate(request.destinationAccountId()).orElseThrow(() ->
-                    new AccountNotFoundException((request.destinationAccountId()))
+            destinationAccount = accountRepository.findByAccountNumberForUpdate(request.destinationAccountNumber()).orElseThrow(() ->
+                    new AccountNotFoundException((request.destinationAccountNumber()))
             );
 
-            sourceAccount = accountRepository.findByIdAndUserId(request.sourceAccountId(), userId).orElseThrow(() ->
-                    new AccountNotFoundException(request.sourceAccountId())
+            sourceAccount = accountRepository.findByAccountNumberAndUserId(request.sourceAccountNumber(), userId).orElseThrow(() ->
+                    new AccountNotFoundException(request.sourceAccountNumber())
             );
         }
+
+        System.out.println(sourceAccount);
 
         if (sourceAccount.getStatus() != AccountStatus.ACTIVE)
             throw new AccountNotActiveException(sourceAccount.getId());

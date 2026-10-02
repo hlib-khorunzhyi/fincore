@@ -124,4 +124,18 @@ public class Account {
         if (status == null)
             status = AccountStatus.ACTIVE;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", balance=" + balance +
+                ", currency=" + currency +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", user=" + user +
+                ", version=" + version +
+                '}';
+    }
 }

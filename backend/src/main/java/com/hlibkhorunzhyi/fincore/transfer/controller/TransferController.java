@@ -32,9 +32,9 @@ public class TransferController {
 
     @PostMapping
     public ResponseEntity<TransferResponse> transfer(
-            @Valid @RequestBody TransferRequest request,
-            @AuthenticationPrincipal User user
-            ){
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody TransferRequest request
+    ){
 
         TransferResponse response = transferService.transfer(request, user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

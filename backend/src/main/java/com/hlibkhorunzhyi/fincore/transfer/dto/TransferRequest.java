@@ -1,18 +1,22 @@
 package com.hlibkhorunzhyi.fincore.transfer.dto;
 
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.jspecify.annotations.NonNull;
 
 import java.math.BigDecimal;
 
 public record TransferRequest(
 
-        @NotNull
-        Long sourceAccountId,
+        @NonNull
+        @NotBlank
+        String sourceAccountNumber,
 
         @NotNull
-        Long destinationAccountId,
+        @NotBlank
+        String destinationAccountNumber,
 
         @NotNull
         @Positive
