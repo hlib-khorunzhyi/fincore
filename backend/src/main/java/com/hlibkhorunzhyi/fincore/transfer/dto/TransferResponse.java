@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record TransferResponse(
-        Long sourceAccountId,
-        Long destinationAccountId,
+        String sourceAccountNumber,
+        String destinationAccountNumber,
         BigDecimal amount,
         TransferStatus status,
         Instant createdAt
@@ -16,8 +16,8 @@ public record TransferResponse(
 
     public static TransferResponse from(Transfer transfer) {
         return new TransferResponse(
-                transfer.getSourceAccount().getId(),
-                transfer.getDestinationAccount().getId(),
+                transfer.getSourceAccount().getAccountNumber(),
+                transfer.getDestinationAccount().getAccountNumber(),
                 transfer.getDestinationAmount(),
                 transfer.getStatus(),
                 transfer.getCreatedAt()

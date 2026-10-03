@@ -3,6 +3,8 @@ package com.hlibkhorunzhyi.fincore.transfer.service;
 import com.hlibkhorunzhyi.fincore.account.entity.Account;
 import com.hlibkhorunzhyi.fincore.account.entity.AccountStatus;
 import com.hlibkhorunzhyi.fincore.account.repository.AccountRepository;
+import com.hlibkhorunzhyi.fincore.commission.model.Commission;
+import com.hlibkhorunzhyi.fincore.commission.service.CommissionService;
 import com.hlibkhorunzhyi.fincore.exceptions.exception.*;
 import com.hlibkhorunzhyi.fincore.transfer.dto.TransferRequest;
 import com.hlibkhorunzhyi.fincore.transfer.dto.TransferResponse;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -20,10 +23,12 @@ public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
     private final AccountRepository accountRepository;
+    private final CommissionService commissionService;
 
-    public TransferServiceImpl(TransferRepository transferRepository, AccountRepository accountRepository) {
+    public TransferServiceImpl(TransferRepository transferRepository, AccountRepository accountRepository, CommissionService commissionService) {
         this.transferRepository = transferRepository;
         this.accountRepository = accountRepository;
+        this.commissionService = commissionService;
     }
 
     @Override
@@ -77,7 +82,10 @@ public class TransferServiceImpl implements TransferService {
             );
         }
 
-        System.out.println(sourceAccount);
+        Commission fee = commissionService.calculate(sourceAccount, destinationAccount, request.amount());
+        BigDecimal totalDebit = request.amount().add(fee.amount());
+
+        // TODO: In future, add bank account where fee will be sent
 
         if (sourceAccount.getStatus() != AccountStatus.ACTIVE)
             throw new AccountNotActiveException(sourceAccount.getId());
@@ -85,7 +93,7 @@ public class TransferServiceImpl implements TransferService {
         if (destinationAccount.getStatus() != AccountStatus.ACTIVE)
             throw new AccountNotActiveException(destinationAccount.getId());
 
-        if (sourceAccount.getBalance().compareTo(request.amount()) < 0)
+        if (sourceAccount.getBalance().compareTo(totalDebit) < 0)
             throw new InsufficientFundsException(sourceAccount.getId());
 
         if (sourceAccount.getCurrency() != destinationAccount.getCurrency())
@@ -100,7 +108,7 @@ public class TransferServiceImpl implements TransferService {
         transfer.setDestinationAmount(request.amount());
 
         sourceAccount.setBalance(
-                sourceAccount.getBalance().subtract(request.amount())
+                sourceAccount.getBalance().subtract(totalDebit)
         );
         destinationAccount.setBalance(
                 destinationAccount.getBalance().add(request.amount())
@@ -108,6 +116,6 @@ public class TransferServiceImpl implements TransferService {
 
         Transfer createdTransfer = transferRepository.save(transfer);
 
-        return TransferResponse.from(createdTransfer);
+        return TransferResponse.from(createdTransfer, fee);
     }
 }

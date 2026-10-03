@@ -21,3 +21,9 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 3600000
+
+fincore:
+  commission:
+    percentage: 0.01
+    minimum: 1.0
+    maximum: 20.0
