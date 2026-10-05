@@ -6,6 +6,7 @@ import com.hlibkhorunzhyi.fincore.account.repository.AccountRepository;
 import com.hlibkhorunzhyi.fincore.commission.model.Commission;
 import com.hlibkhorunzhyi.fincore.commission.service.CommissionService;
 import com.hlibkhorunzhyi.fincore.exceptions.exception.*;
+import com.hlibkhorunzhyi.fincore.exchange.service.ExchangeRateService;
 import com.hlibkhorunzhyi.fincore.transfer.dto.TransferRequest;
 import com.hlibkhorunzhyi.fincore.transfer.dto.TransferResponse;
 import com.hlibkhorunzhyi.fincore.transfer.entity.Transfer;
@@ -24,11 +25,13 @@ public class TransferServiceImpl implements TransferService {
     private final TransferRepository transferRepository;
     private final AccountRepository accountRepository;
     private final CommissionService commissionService;
+    private final ExchangeRateService exchangeRateService;
 
-    public TransferServiceImpl(TransferRepository transferRepository, AccountRepository accountRepository, CommissionService commissionService) {
+    public TransferServiceImpl(TransferRepository transferRepository, AccountRepository accountRepository, CommissionService commissionService, ExchangeRateService exchangeRateService) {
         this.transferRepository = transferRepository;
         this.accountRepository = accountRepository;
         this.commissionService = commissionService;
+        this.exchangeRateService = exchangeRateService;
     }
 
     @Override
@@ -116,6 +119,6 @@ public class TransferServiceImpl implements TransferService {
 
         Transfer createdTransfer = transferRepository.save(transfer);
 
-        return TransferResponse.from(createdTransfer, fee);
+        return TransferResponse.from(createdTransfer);
     }
 }
