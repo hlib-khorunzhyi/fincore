@@ -8,8 +8,11 @@ import java.time.Instant;
 
 public record TransferResponse(
         String sourceAccountNumber,
+        BigDecimal sourceAmount,
         String destinationAccountNumber,
-        BigDecimal amount,
+        BigDecimal destinationAmount,
+        BigDecimal feeAmount,
+        BigDecimal exchangeRate,
         TransferStatus status,
         Instant createdAt
 ) {
@@ -17,8 +20,11 @@ public record TransferResponse(
     public static TransferResponse from(Transfer transfer) {
         return new TransferResponse(
                 transfer.getSourceAccount().getAccountNumber(),
+                transfer.getSourceAmount(),
                 transfer.getDestinationAccount().getAccountNumber(),
                 transfer.getDestinationAmount(),
+                transfer.getFeeAmount(),
+                transfer.getExchangeRate(),
                 transfer.getStatus(),
                 transfer.getCreatedAt()
         );

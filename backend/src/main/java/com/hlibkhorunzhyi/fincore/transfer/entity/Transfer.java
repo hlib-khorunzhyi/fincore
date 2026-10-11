@@ -1,6 +1,7 @@
 package com.hlibkhorunzhyi.fincore.transfer.entity;
 
 import com.hlibkhorunzhyi.fincore.account.entity.Account;
+import com.hlibkhorunzhyi.fincore.account.entity.Currency;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -29,6 +30,12 @@ public class Transfer {
     @Column(name = "destination_amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal destinationAmount;
 
+    @Column(name = "exchange_rate", nullable = false, precision = 19, scale = 10)
+    private BigDecimal exchangeRate = BigDecimal.ONE;
+
+    @Column(name = "fee_amount", nullable = false, precision = 19, scale = 2)
+    private BigDecimal feeAmount = BigDecimal.ZERO;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 12)
     private TransferStatus status;
@@ -39,12 +46,14 @@ public class Transfer {
     public Transfer() {
     }
 
-    public Transfer(Long id, Account sourceAccount, BigDecimal sourceAmount, Account destinationAccount, BigDecimal destinationAmount, TransferStatus status, Instant createdAt) {
+    public Transfer(Long id, Account sourceAccount, BigDecimal sourceAmount, Account destinationAccount, BigDecimal destinationAmount, BigDecimal exchangeRate, BigDecimal feeAmount, TransferStatus status, Instant createdAt) {
         this.id = id;
         this.sourceAccount = sourceAccount;
         this.sourceAmount = sourceAmount;
         this.destinationAccount = destinationAccount;
         this.destinationAmount = destinationAmount;
+        this.exchangeRate = exchangeRate;
+        this.feeAmount = feeAmount;
         this.status = status;
         this.createdAt = createdAt;
     }
@@ -87,6 +96,22 @@ public class Transfer {
 
     public void setDestinationAmount(BigDecimal destinationAmount) {
         this.destinationAmount = destinationAmount;
+    }
+
+    public BigDecimal getExchangeRate() {
+        return exchangeRate;
+    }
+
+    public void setExchangeRate(BigDecimal exchangeRate) {
+        this.exchangeRate = exchangeRate;
+    }
+
+    public BigDecimal getFeeAmount() {
+        return feeAmount;
+    }
+
+    public void setFeeAmount(BigDecimal feeAmount) {
+        this.feeAmount = feeAmount;
     }
 
     public TransferStatus getStatus() {

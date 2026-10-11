@@ -6,6 +6,7 @@ import com.hlibkhorunzhyi.fincore.account.repository.AccountRepository;
 import com.hlibkhorunzhyi.fincore.commission.model.Commission;
 import com.hlibkhorunzhyi.fincore.commission.service.CommissionService;
 import com.hlibkhorunzhyi.fincore.exceptions.exception.*;
+import com.hlibkhorunzhyi.fincore.exchange.model.ExchangeResult;
 import com.hlibkhorunzhyi.fincore.exchange.service.ExchangeRateService;
 import com.hlibkhorunzhyi.fincore.transfer.dto.TransferRequest;
 import com.hlibkhorunzhyi.fincore.transfer.dto.TransferResponse;
@@ -85,36 +86,35 @@ public class TransferServiceImpl implements TransferService {
             );
         }
 
-        Commission fee = commissionService.calculate(sourceAccount, destinationAccount, request.amount());
-        BigDecimal totalDebit = request.amount().add(fee.amount());
-
-        // TODO: In future, add bank account where fee will be sent
-
         if (sourceAccount.getStatus() != AccountStatus.ACTIVE)
             throw new AccountNotActiveException(sourceAccount.getId());
 
         if (destinationAccount.getStatus() != AccountStatus.ACTIVE)
             throw new AccountNotActiveException(destinationAccount.getId());
 
+        // TODO: In future, add bank account where fee will be sent
+        Commission fee = commissionService.calculate(sourceAccount, destinationAccount, request.amount());
+        BigDecimal totalDebit = request.amount().add(fee.amount());
+
+        ExchangeResult exchange = exchangeRateService.calculate(sourceAccount, destinationAccount, request.amount());
+
         if (sourceAccount.getBalance().compareTo(totalDebit) < 0)
             throw new InsufficientFundsException(sourceAccount.getId());
-
-        if (sourceAccount.getCurrency() != destinationAccount.getCurrency())
-            throw new CurrencyMismatchException();
-
 
         Transfer transfer = new Transfer();
 
         transfer.setSourceAccount(sourceAccount);
         transfer.setSourceAmount(request.amount());
         transfer.setDestinationAccount(destinationAccount);
-        transfer.setDestinationAmount(request.amount());
+        transfer.setDestinationAmount(exchange.destinationAmount());
+        transfer.setFeeAmount(fee.amount());
+        transfer.setExchangeRate(exchange.exchangeRate());
 
         sourceAccount.setBalance(
                 sourceAccount.getBalance().subtract(totalDebit)
         );
         destinationAccount.setBalance(
-                destinationAccount.getBalance().add(request.amount())
+                destinationAccount.getBalance().add(exchange.destinationAmount())
         );
 
         Transfer createdTransfer = transferRepository.save(transfer);

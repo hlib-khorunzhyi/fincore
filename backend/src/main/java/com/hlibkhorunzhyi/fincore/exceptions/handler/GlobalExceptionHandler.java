@@ -18,17 +18,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials(
-            InvalidCredentialsException exception
-    ) {
-        return buildErrorResponse(
-                HttpStatus.UNAUTHORIZED,
-                "INVALID_CREDENTIALS",
-                exception.getMessage()
-        );
-    }
-
     @ExceptionHandler(AccountAlreadyClosedException.class)
     public ResponseEntity<ErrorResponse> handleAccountAlreadyClosed(
             AccountAlreadyClosedException exception
@@ -51,6 +40,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(AccountNotActiveException.class)
+    public ResponseEntity<ErrorResponse> handleAccountNoActive(
+            AccountNotActiveException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                "ACCOUNT_NO_ACTIVE",
+                exception.getMessage()
+        );
+    }
+
     @ExceptionHandler(AccountNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAccountNotFound(
             AccountNotFoundException exception
@@ -59,6 +59,28 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 "ACCOUNT_NOT_FOUND",
                 exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(CurrencyMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleCurrencyMismatch(
+            CurrencyMismatchException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                "CURRENCY_MISMATCH",
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+            DataIntegrityViolationException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                "DATA_INTEGRITY_VIOLATION",
+                "The requested operation violates a database constraint"
         );
     }
 
@@ -73,25 +95,36 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(
-            UserNotFoundException exception
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientFunds(
+            InsufficientFundsException exception
     ) {
         return buildErrorResponse(
-                HttpStatus.NOT_FOUND,
-                "USER_NOT_FOUND",
+                HttpStatus.CONFLICT,
+                "INSUFFICIENT_FUNDS",
                 exception.getMessage()
         );
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
-            DataIntegrityViolationException exception
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(
+            InvalidCredentialsException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                "INVALID_CREDENTIALS",
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(InvalidTransferException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTransfer(
+            InvalidTransferException exception
     ) {
         return buildErrorResponse(
                 HttpStatus.CONFLICT,
-                "DATA_INTEGRITY_VIOLATION",
-                "The requested operation violates a database constraint"
+                "INVALID_TRANSFER",
+                exception.getMessage()
         );
     }
 
@@ -117,6 +150,17 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(
+            UserNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                "USER_NOT_FOUND",
+                exception.getMessage()
+        );
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(
